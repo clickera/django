@@ -1,0 +1,22 @@
+"""
+  Simple copy file from existing FileField instance
+  Using:
+  
+    import filefieldproxy
+    instance = Uploads.objects.get(pk=1)
+    upload = Uploads(file=filefieldproxy.FileFieldProxy(instance.file))
+    upload.save()
+"""
+
+from django.core.files import File
+
+
+class FileFieldProxy(File):
+    def __init__(self, file_field):
+        self.file = file_field
+        self.size = file_field.size
+        self.name = os.path.basename(file_field.name)
+
+    def open(self, mode=None):
+        self.file = open(self.name, mode or self.mode)
+        return self
